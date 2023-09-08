@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -7,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.ReXtOr.GroupChat"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.ReXtOr.GroupChat"
@@ -32,13 +34,18 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    tasks.withType<KotlinCompile>().configureEach{
+        kotlinOptions{
+            jvmTarget = "1.8"
+        }
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 
-//    kotlinOptions {
-//        jvmTarget = "1.8"
-//    }
     buildFeatures {
         compose = true
     }
@@ -55,11 +62,16 @@ android {
 
 
 }
+tasks.withType<KotlinCompile>{
+    kotlinOptions{
+        freeCompilerArgs= listOf("-Xlint:deprecation")
+    }
+}
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.core:core-ktx:1.10.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
@@ -75,8 +87,30 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.46")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
+    kapt ("androidx.hilt:hilt-compiler:1.0.0")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
+//    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0")
+
+    //Retrofit
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    //Ktor
+    implementation ("io.ktor:ktor-serialization-kotlinx-json:2.3.0")
+    implementation ("io.ktor:ktor-client-core:2.3.4")
+    implementation ("io.ktor:ktor-client-cio:2.3.4")
+    implementation ("io.ktor:ktor-client-websockets:2.3.0")
+
+    //viewmodel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2")
+
+    //navigation
+    implementation("androidx.navigation:navigation-compose:2.7.2")
+
+
 }
 
 kapt {
