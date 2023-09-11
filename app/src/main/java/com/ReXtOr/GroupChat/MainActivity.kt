@@ -1,10 +1,13 @@
 package com.ReXtOr.GroupChat
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -76,48 +79,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App() {
-    Column {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .background(Purple80)
-                .fillMaxWidth(1f)
-                .fillMaxHeight(0.06f)
-                .border(
-                    width = 1.dp,
-                    color = Purple80,
-                    shape = RoundedCornerShape(10)
-                )
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back Botton",
-                modifier = Modifier
-                    .padding(10.dp)
 
-            )
-            Spacer(modifier = Modifier.fillMaxWidth(0.2f))
-            Text(
-                text = "Random Chatz",
-                modifier = Modifier.padding(10.dp),
-                textAlign = TextAlign.Center,
-                color = Purple40,
-                fontSize = 20.sp,
-
-                )
-            Spacer(modifier = Modifier.fillMaxWidth(0.4f))
-            Spacer(modifier = Modifier.fillMaxWidth(0.4f))
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Account",
-                modifier = Modifier
-                    .padding(10.dp)
-
-            )
-        }
         Navigation()
 //            CreateNewRoom()
-    }
+
 
 }
 

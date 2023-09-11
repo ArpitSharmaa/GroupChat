@@ -38,7 +38,7 @@ object Module {
 
     @Provides
     @Singleton
-    fun provideWebsocket(): webSocketInterface {
+    fun provideWebsocket(): Websocket {
         return Websocket()
     }
 
