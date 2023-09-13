@@ -5,6 +5,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.plugins.websocket.webSocketSession
+import io.ktor.client.request.url
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
 import io.ktor.websocket.WebSocketSession
@@ -13,42 +15,47 @@ import io.ktor.websocket.readText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import okhttp3.WebSocket
 import kotlin.math.log
 
-class Websocket : webSocketInterface {
-    val client = HttpClient(CIO) {
-        install(WebSockets)
-    }
+class Websocket (private val client: HttpClient): webSocketInterface {
     var session: WebSocketSession? = null
     val _returnvalue = MutableStateFlow<String>("")
     val returnValue: StateFlow<String>
         get() = _returnvalue
 
-    override suspend fun getwebsocketmsg(roomname: String) {
+    override suspend fun connect(roomname:String) {
+        session = client.webSocketSession {
+//            url("ws://192.168.29.199:8080/chatroom/$roomname")
+            url("ws://ancient-blade-398510.el.r.appspot.com/chatroom/$roomname")
+        }
+    }
 
+
+    override suspend fun getwebsocketmsg() {
 
         try {
-            client.webSocket(
-//                host = "192.168.29.199",
-//                port = 8080,
-//                path = "/chatroom/$roomname"
-                "ws://ancient-blade-398510.el.r.appspot.com/chatroom/$roomname"
-            ) {
-                session = this
-                for (frame in incoming) {
-                    val z = frame as Frame.Text
-                    val value = z.readText()
-                    Log.e("TAG", "getwebsocketmsg:$value ")
-                    _returnvalue.value = z.readText()
-                }
-            }
-        } catch (_: Exception) {
 
-        }
+               session!!.incoming
+                   .receiveAsFlow()
+                   .collectLatest {
+
+                       _returnvalue.value = (it as Frame.Text).readText()
+
+                   }
+
+
+
+    }catch (_:Exception){
 
     }
+    }
+
 
     override suspend fun sendmsg(msg: String):Boolean {
         if (session != null) {
@@ -62,7 +69,13 @@ class Websocket : webSocketInterface {
     }
 
     override suspend fun closesession() {
-        session?.close(CloseReason(CloseReason.Codes.NORMAL,"UserLeaves"))
+        if (session != null) {
+//            Log.e("TAG", "closesession: called session", )
+            session?.close(CloseReason(CloseReason.Codes.GOING_AWAY,"User Left"))
+        }else{
+            Log.e("TAG", "closesession: called session", )
+        }
+
     }
 
 
